@@ -2,6 +2,7 @@
 #Modulo 1 - Práctica 2
 #Compiladores D03
 #git add . -> git commit -> git push.
+#Esta es la rama principal (main)
 
 class Automata:
     def __init__(self):
