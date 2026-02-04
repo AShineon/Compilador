@@ -7,6 +7,7 @@ class Automata:
     def __init__(self):
         self.estado = 'inicio'
         self.caracteres_prohibidos = {'$', '#', '/', '(', '@', '-', '\\', '|', ':', ';', '.', ',', '?', '!', ')', '&', '<', '>', ' '}
+        self.operadores = {'+', '-', '*', '/', '%', '='}
 
     def transicion(self, caracter):
         if self.estado == 'inicio':
@@ -30,6 +31,12 @@ class Automata:
             if self.estado == 'invalido':
                 return False
         return self.estado == 'valido'
+    
+    def clasificar_cadena(self, cadena):
+        if self.es_valida(cadena):
+            return "Variable válida +"
+        else:
+            return "Variable no válida"
     
 
     # Añadimos el método para procesar la lista completa
