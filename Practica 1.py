@@ -31,7 +31,6 @@ class Automata:
                 return False
         return self.estado == 'valido'
     
-    
 
     # Añadimos el método para procesar la lista completa
     def validar_lista(self, lista):
