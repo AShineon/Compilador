@@ -22,11 +22,12 @@ class Automata:
         else:
             if caracter in self.no_permitidos:
                 self.estado = "invalido"
+                
     def validar(self, lista, cadena):
         resultados = []
         for variable in lista:
             automata = Automata()
-            # Cadena vacía no es válida
+            # Cadena vacía no es válidas
             if len(variable) == 0:
                 resultados.append(False)
                 continue
