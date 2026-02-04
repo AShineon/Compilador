@@ -30,10 +30,14 @@ class Automata:
             if self.estado == 'invalido':
                 return False
         return self.estado == 'valido'
+    
+    
 
     # Añadimos el método para procesar la lista completa
     def validar_lista(self, lista):
         return [self.es_valida(v) for v in lista]
+
+
 
 lista = ["_variable1", "var2", "3variable", "var-3", "var 4", "var$nombre", "_var_final", "nombre@", "a", "_1var", " "]
 
