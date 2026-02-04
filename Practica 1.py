@@ -3,6 +3,7 @@
 #Compiladores D03
 #git add . -> git commit -> git push.
 
+# Clase token para representar los tokens generados por el lexer
 class token:
     def __init__(self, tipo, valor):
         self.tipo = tipo
@@ -11,6 +12,7 @@ class token:
     def __repr__(self):
         return f"Token({self.tipo}, {self.valor})"
     
+# Clase nodo para representar los nodos del árbol sintáctico
 class nodo:
     
     def __init__(self, valor, tipo):
@@ -24,6 +26,7 @@ class nodo:
     def __repr__(self):
         return f"Nodo({self.tipo}, {self.valor})"
 
+# Clase lexer para el análisis léxico (Es quien se encarga de dividir el código fuente en tokens)
 class lexer:
     def __init__(self, entrada):
         self.entrada = entrada
@@ -78,7 +81,8 @@ class lexer:
             raise ValueError(f"Caracter desconocido encontrado: {self.caracter_actual}")
         tokens.append(token('EOF', None))
         return tokens
-        
+    
+# Clase parser para el análisis sintáctico (Es quien se encarga de construir el árbol sintáctico a partir de los tokens)
 class parser:
     
     def __init__(self, lista_tokens):
