@@ -2,12 +2,13 @@
 #Modulo 1 - Práctica 2
 #Compiladores D03
 #git add . -> git commit -> git push.
+#M1-p3_2.0
 
 class Automata:
     def __init__(self):
         self.estado = 'inicio'
-        self.caracteres_prohibidos = {'$', '#', '/', '(', '@', '-', '\\', '|', ':', ';', '.', ',', '?', '!', ')', '&', '<', '>', ' '}
-        self.operadores = {'+', '-', '*', '/', '%', '='}
+        self.caracteres_prohibidos = {'$', '#', '/', '@', '\\', '|', ':', ';', '.', ',', '?', '!', '&', '<', '>', ' '}
+        self.operadores = {'+', '-', '*', '/', '%', '=', "(", ")"}
 
     def transicion(self, caracter):
         if self.estado == 'inicio':
@@ -22,6 +23,11 @@ class Automata:
                 self.estado = 'valido'
             else:
                 self.estado = 'invalido'
+        elif self.estado == 'numerico':
+            if caracter.isdigit():
+                self.estado = 'numerico'
+            else:
+                self.estado = 'invalido'
 
     def es_valida(self, cadena):
         if not cadena: return False # Caso cadena vacía
@@ -32,11 +38,7 @@ class Automata:
                 return False
         return self.estado == 'valido'
     
-    def clasificar_cadena(self, cadena):
-        if self.es_valida(cadena):
-            return "Variable válida +"
-        else:
-            return "Variable no válida"
+    def 
     
 
     # Añadimos el método para procesar la lista completa
