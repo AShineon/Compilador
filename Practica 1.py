@@ -22,18 +22,14 @@ class Automata:
         else:
             if caracter in self.no_permitidos:
                 self.estado = "invalido"
-                
-            
-class Validacion:
-    def __init__(self, lista, cadena):
-        self.lista = lista
-        self.cadena = cadena
-        self.automata = Automata()
-        
-    def validar(self):
+    def validar(self, lista, cadena):
         resultados = []
-        for variable in self.lista:
+        for variable in lista:
             automata = Automata()
+            # Cadena vacía no es válida
+            if len(variable) == 0:
+                resultados.append(False)
+                continue
             # Validar primer carácter
             if variable[0].isdigit():
                 resultados.append(False)
@@ -47,14 +43,12 @@ class Validacion:
                     break
             resultados.append(valido)
         return resultados
-    
-    
+
+
 lista = ["_variable1", "var2", "3variable", "var-3", "var 4", "var$nombre", "_var_final", "nombre@", "a", "_1var", " "]
 
-
-val = Validacion(lista, "")
-resultados = val.validar()
-
+automata = Automata()
+resultados = automata.validar(lista, "")
 
 for variable in lista:
     if resultados[lista.index(variable)]:
