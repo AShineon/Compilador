@@ -5,54 +5,43 @@
 
 class Automata:
     def __init__(self):
-        self.estado = "inicio"
-        self.no_permitidos = ["&", "%", "$", "#", "@", "!", "¡", "?", "¿", "-", "+", "=", "*", "/", "\\", " "]
-        
-    def transicion(self, caracter):
-        if self.estado == "inicio":
-            if caracter.isalpha() or caracter == "_":
-                self.estado = "valido"
-            else:
-                self.estado = "invalido"
-        elif self.estado == "valido":
-            if caracter.isalnum() or caracter == "_":
-                self.estado = "valido"
-            else:
-                self.estado = "invalido" 
-        else:
-            if caracter in self.no_permitidos:
-                self.estado = "invalido"
-                
-    def validar(self, lista, cadena):
-        resultados = []
-        for variable in lista:
-            automata = Automata()
-            # Cadena vacía no es válidas
-            if len(variable) == 0:
-                resultados.append(False)
-                continue
-            # Validar primer carácter
-            if variable[0].isdigit():
-                resultados.append(False)
-                continue
-            # Validar resto de caracteres
-            valido = True
-            for caracter in variable:
-                automata.transicion(caracter)
-                if automata.estado == "invalido":
-                    valido = False
-                    break
-            resultados.append(valido)
-        return resultados
+        self.estado = 'inicio'
+        self.caracteres_prohibidos = {'$', '#', '/', '(', '@', '-', '\\', '|', ':', ';', '.', ',', '?', '!', ')', '&', '<', '>', ' '}
 
+    def transicion(self, caracter):
+        if self.estado == 'inicio':
+            # El primer caracter: letra o '_' (no puede empezar con número)
+            if (caracter.isalpha() or caracter == '_') and caracter not in self.caracteres_prohibidos:
+                self.estado = 'valido'
+            else:
+                self.estado = 'invalido'
+        elif self.estado == 'valido':
+            # Siguientes: alfanuméricos o '_'
+            if (caracter.isalnum() or caracter == '_') and caracter not in self.caracteres_prohibidos:
+                self.estado = 'valido'
+            else:
+                self.estado = 'invalido'
+
+    def es_valida(self, cadena):
+        if not cadena: return False # Caso cadena vacía
+        self.estado = 'inicio'
+        for caracter in cadena:
+            self.transicion(caracter)
+            if self.estado == 'invalido':
+                return False
+        return self.estado == 'valido'
+
+    # Añadimos el método para procesar la lista completa
+    def validar_lista(self, lista):
+        return [self.es_valida(v) for v in lista]
 
 lista = ["_variable1", "var2", "3variable", "var-3", "var 4", "var$nombre", "_var_final", "nombre@", "a", "_1var", " "]
 
 automata = Automata()
-resultados = automata.validar(lista, "")
+resultados = automata.validar_lista(lista)
 
-for variable in lista:
-    if resultados[lista.index(variable)]:
+for i, variable in enumerate(lista):
+    if resultados[i]:
         print(f"La variable '{variable}' es válida.")
     else:
         print(f"La variable '{variable}' no es válida.")
