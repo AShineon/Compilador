@@ -4,61 +4,113 @@
 #git add . -> git commit -> git push.
 #Esta es la rama principal (main)
 
-class Automata:
-    def __init__(self):
-        self.estado = "inicio"
-        self.no_permitidos = ["&", "%", "$", "#", "@", "!", "¡", "?", "¿", "-", "+", "=", "*", "/", "\\", " "]
+class Token:
+    def __init__(self, tipo, valor):
+        self.tipo = tipo
+        self.valor = valor
+
+    def __repr__(self):
+        return f"Token({self.tipo}, {self.valor})"
+
+class Lexer:
+    def __init__(self, texto):
+        self.texto = texto
+        self.pos = 0
+        self.caracter_actual = self.texto[self.pos] if self.texto else None
         
-    def transicion(self, caracter):
-        if self.estado == "inicio":
-            if caracter.isalpha() or caracter == "_":
-                self.estado = "valido"
-            else:
-                self.estado = "invalido"
-        elif self.estado == "valido":
-            if caracter.isalnum() or caracter == "_":
-                self.estado = "valido"
-            else:
-                self.estado = "invalido" 
+        self.operadores = {'+', '-', '*', '=', '/','(', ')'}
+        
+        self.caracteres_prohibidos = {
+            '$', '#', '@', '\\', '|', ':', ';', '.', ',', 
+            '?', '!', '&', '<', '>', ' '
+        }
+
+    def avanzar(self):
+        self.pos += 1
+        if self.pos < len(self.texto):
+            self.caracter_actual = self.texto[self.pos]
         else:
-            if caracter in self.no_permitidos:
-                self.estado = "invalido"
-                
+            self.caracter_actual = None
+
+    def _saltar_espacios(self):
+        while self.caracter_actual is not None and self.caracter_actual.isspace():
+            self.avanzar()
+
+    def _leer_numero(self):
+        num_str = ''
+        while self.caracter_actual is not None and self.caracter_actual.isdigit():
+            num_str += self.caracter_actual
+            self.avanzar()
+        return Token('NUM', int(num_str))
+
+    def _leer_identificador(self):
+        id_str = ''
+        while self.caracter_actual is not None and (self.caracter_actual.isalnum() or self.caracter_actual == '_'):
+            id_str += self.caracter_actual
+            self.avanzar()
+        return Token('ID', id_str)
+
+    def tokenizar(self):
+        tokens = []
+        while self.caracter_actual is not None:
             
-class Validacion:
-    def __init__(self, lista, cadena):
-        self.lista = lista
-        self.cadena = cadena
-        self.automata = Automata()
-        
-    def validar(self):
-        resultados = []
-        for variable in self.lista:
-            automata = Automata()
-            # Validar primer carácter
-            if variable[0].isdigit():
-                resultados.append(False)
+            if self.caracter_actual.isspace():
+                self._saltar_espacios()
                 continue
-            # Validar resto de caracteres
-            valido = True
-            for caracter in variable:
-                automata.transicion(caracter)
-                if automata.estado == "invalido":
-                    valido = False
-                    break
-            resultados.append(valido)
-        return resultados
+            
+            if self.caracter_actual.isdigit():
+                tokens.append(self._leer_numero())
+                continue
+            
+            if self.caracter_actual.isalpha() or self.caracter_actual == '_':
+                tokens.append(self._leer_identificador())
+                continue
+            
+            if self.caracter_actual in self.operadores:
+                tipo = 'PARENTESIS' if self.caracter_actual in '()' else 'OP'
+                tokens.append(Token(tipo, self.caracter_actual))
+                self.avanzar()
+                continue
+            
+            if self.caracter_actual in self.caracteres_prohibidos:
+                tokens.append(Token('INVALIDO', self.caracter_actual))
+                self.avanzar()
+                continue
+            
+            tokens.append(Token('DESCONOCIDO', self.caracter_actual))
+            self.avanzar()
+            
+        return tokens
+
+lista_cadenas = [
+    "3_Var = 13 - 7", 
+    "Total = 5 * (10 + 2)",
+    "C:/Users/alber/python.exe"
+]
+
+
+for i, cadena in enumerate(lista_cadenas, 1):
+    print(f"\n--- Analizando cadena {i}: '{cadena}' ---")
     
+    lexer = Lexer(cadena)
+    lista_tokens = lexer.tokenizar()
+
+    for token in lista_tokens:
+        print(f"Tipo: {token.tipo}, Valor: '{token.valor}'")
+
+'''
+for i, cadena in enumerate(lista_cadenas, 1):
+    print(f"\n--- Analizando cadena {i}: '{cadena}' ---")
     
-lista = ["_variable1", "var2", "3variable", "var-3", "var 4", "var$nombre", "_var_final", "nombre@", "a", "_1var", " "]
+    lexer = Lexer(cadena)
+    lista_tokens = lexer.tokenizar()
 
-
-val = Validacion(lista, "")
-resultados = val.validar()
-
-
-for variable in lista:
-    if resultados[lista.index(variable)]:
-        print(f"La variable '{variable}' es válida.")
-    else:
-        print(f"La variable '{variable}' no es válida.")
+    for token in lista_tokens:
+        nota = ""
+        if token.tipo == 'ID':
+            nota = " -> Variable Valida"
+        elif token.tipo == 'INVALIDO':
+            nota = " -> Caracter Invalido/Prohibido"
+        
+        print(f"Tipo: {token.tipo}, Valor: '{token.valor}'{nota}")
+'''
