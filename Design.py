@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter import END, messagebox, ttk
-# M1-p3_design 
-
+# Main 
 
 class datos: 
     def __init__(self):
